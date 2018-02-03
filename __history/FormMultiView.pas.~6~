@@ -1,0 +1,115 @@
+unit FormMultiView;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Tabs,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef,
+  FireDAC.Stan.ExprFuncs, FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, VclTee.TeeGDIPlus,
+  VCLTee.TeEngine, VCLTee.Series, Vcl.ExtCtrls, VCLTee.TeeProcs, VCLTee.Chart,
+  VCLTee.DBChart;
+
+type
+  TForm1 = class(TForm)
+    FDConnection1: TFDConnection;
+    FDQuery_NIWA: TFDQuery;
+    DataSource1: TDataSource;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    DBGrid1: TDBGrid;
+    Memo_SQL: TMemo;
+    Button1: TButton;
+    DBChart1: TDBChart;
+    Series1: TLineSeries;
+    fromDateTimePicker: TDateTimePicker;
+    toDateTimePicker: TDateTimePicker;
+    Label1: TLabel;
+    Label2: TLabel;
+    GroupBox1: TGroupBox;
+    maxTempTrackBar: TTrackBar;
+    minTempTrackBar: TTrackBar;
+    GroupBox2: TGroupBox;
+    maxRHTrackBar: TTrackBar;
+    minRHTrackBar: TTrackBar;
+    RadioGroup1: TRadioGroup;
+    RadioButton1: TRadioButton;
+    RadioButton2: TRadioButton;
+    queryButton: TButton;
+    procedure Button1Click(Sender: TObject);
+    procedure FDQuery_NIWACalcFields(DataSet: TDataSet);
+    procedure queryButtonClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  FDQuery_NIWA.Active :=false;
+  FDQuery_NIWA.SQL := Memo_SQL.Lines;
+  FDQuery_NIWA.Active :=true;
+
+end;
+
+procedure TForm1.FDQuery_NIWACalcFields(DataSet: TDataSet);
+begin
+  FDQuery_NIWA.FieldByName('date').AsString :='201711';
+end;
+
+procedure TForm1.queryButtonClick(Sender: TObject);
+var
+sql_fromDate ,sql_toDate :TDateTime ;
+sql_minTemp,sql_maxTemp,sql_minRH,sql_maxRH : Integer;
+Query,str_date,str_temp,str_rh,str_date_from,str_date_to: String;
+date_year,date_month,date_day:Word;
+begin
+  sql_fromDate:=fromDateTimePicker.DateTime ;
+  sql_toDate:=toDateTimePicker.DateTime ;
+
+  DecodeDate( sql_fromDate, date_year,date_month,date_day);
+  str_date_from := date_year.ToString +'-'+date_month.ToString +'-'+date_day.ToString + ' 00:00:00' ;
+
+  DecodeDate( sql_toDate, date_year,date_month,date_day);
+  str_date_to := date_year.ToString +'-'+date_month.ToString +'-'+date_day.ToString +' 23:59:59';
+
+
+
+
+  str_date := ' datetime(date) < datetime( ' + QuotedStr (DateTimeToStr(sql_toDate)) +') and datetime(date) > datetime( ' +DateTimeToStr(sql_fromDate) +')';
+  //str_date := ' datetime(date) < datetime( ' + '''' + date_year.ToString + ''''+') and datetime(date) > datetime( ' + ''''+str_date_from + ''''+')';
+  //str_date := Format('datetime(date)<datetime(%s) and datetime(date) > datetime(''%s'') ',[str_date_to,str_date_from]);
+    // 应该是单引号，但总是双引号。
+
+
+  sql_minTemp := minTempTrackBar.Position;
+  sql_maxTemp := maxTempTrackBar.Position;
+  str_temp :=  'temp <' + sql_maxTemp.ToString +' and temp > ' +sql_minTemp.ToString;
+
+  sql_minRH := minRHTrackBar.Position;
+  sql_maxRH := maxRHTrackBar.Position;
+  str_rh :=  'rh <' + sql_maxRH.ToString +' and rh > ' +sql_minRH.ToString;
+
+  Query :='select * from temp2017Date where ' +   str_date +' and '
+  +   str_temp +' and '
+  +    str_rh;
+
+  FDQuery_NIWA.Active := false;
+  FDQuery_NIWA.SQL.Text := Query;
+  FDQuery_NIWA.Active := true;
+end;
+
+end.

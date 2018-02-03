@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2018/01/29 16:35:23.000.962,=C:\Users\matt\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/01/30 14:49:02.000.981,=C:\Users\matt\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/01/30 15:21:48.000.565,C:\Users\matt\Documents\Embarcadero\Studio\Projects\Unit1.pas=D:\MyProject\DelphiProject\TempViewer\FormMultiView.pas</Transaction>
+    <Transaction>2018/01/30 15:21:48.000.565,C:\Users\matt\Documents\Embarcadero\Studio\Projects\Unit1.dfm=D:\MyProject\DelphiProject\TempViewer\FormMultiView.dfm</Transaction>
+    <Transaction>2018/01/30 15:22:26.000.384,C:\Users\matt\Documents\Embarcadero\Studio\Projects\Project1.dproj=D:\MyProject\DelphiProject\TempViewer\TempViewer.dproj</Transaction>
+  </Transactions>
+	<ActiveMobileDevice>
+		<NoProfile iOSSimulator="iPhone5"/>
+	</ActiveMobileDevice>
+</BorlandProject>
